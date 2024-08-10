@@ -13,7 +13,7 @@ exports.crateCategory=async(req,res)=>{
         }
         const info=await Category.create({name,description})
         console.log(info)
-        res.status(401).json({
+        res.status(200).json({
             message:"Succesfully inserted the tags in the Db",
             success:true
         })
@@ -69,13 +69,7 @@ exports.categoryPageDetails = async (req, res) => {
           .json({ success: false, message: "Category not found" })
       }
       // Handle the case when there are no courses
-      if (selectedCategory.course.length === 0) {
-        console.log("No courses found for the selected category.")
-        return res.status(404).json({
-          success: false,
-          message: "No courses found for the selected category.",
-        })
-      }
+   
   
       // Get courses for other categoriess
       const categoriesExceptSelected = await Category.find({
@@ -106,8 +100,20 @@ exports.categoryPageDetails = async (req, res) => {
     //     .sort((a, b) => b.sold - a.sold)
     //     .slice(0, 10)
     //    // console.log("mostSellingCourses COURSE", mostSellingCourses)
+    if (selectedCategory.course.length === 0) {
+      console.log("No courses found for the selected category.")
+      return res.status(200).json({
+        success: true,
+        message: "No courses found for the selected category.",
+        data: {
+          selectedCategory,
+          differentCategory,
+        },
+      })
+    }
       res.status(200).json({
         success: true,
+        message:"Course Data ",
         data: {
           selectedCategory,
           differentCategory,

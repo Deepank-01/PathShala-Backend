@@ -66,7 +66,6 @@ exports.updateSection=async(req,res)=>{
             success:true,
             message: info,
 			data:course,
-        
          })
     
 

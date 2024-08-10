@@ -1,3 +1,4 @@
+const Course = require('../model/Course')
 const Profile=require('../model/Profile')
 const User=require('../model/User')
 const { ImageUpload } = require('../utils/ImageUpload')
@@ -97,3 +98,38 @@ exports.updateDisplayPicture = async (req, res) => {
     })
   }
 };
+
+// for the Dashboard 
+exports.instructorDashboard=async(req,res)=>{
+  try{
+        const user_id=req.user.id
+        const courses=await Course.find({instructor:user_id})
+        const courseData=courses.map(item=>{
+          const TotalStudent=item.studentEnrolled.length
+          const TotalMoney=TotalStudent*item.price
+
+          const courseDatawithStats={
+            _id:item._id,
+            courseName:item.courseName,
+            thumbnail:item.thumbnail,
+            courseDescription:item.courseDescription,
+            TotalMoney,
+            TotalStudent
+          }
+          return courseDatawithStats
+        })
+
+        res.status(200).json({
+          success:true,
+          courseData,
+        
+        })
+  }
+  catch(err){
+       return res.status(500).json({
+        success:false,
+        message:"Error in the instrutor code for the stats",
+        error:err.message
+       })
+  }
+}

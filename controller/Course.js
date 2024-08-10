@@ -6,6 +6,7 @@ const Section = require('../model/Section')
 const Sub_Section = require('../model/Sub_Section')
 const { convertSecondsToDuration } = require('../utils/secToDuration')
 require('dotenv').config()
+const mongoose = require('mongoose');
 
 // Create the course by instructor 
 exports.CreateCourse=async(req,res)=>{
@@ -342,6 +343,73 @@ exports.getFullCourseDetails = async (req, res) => {
     return res.status(500).json({
       success: false,
       message: error.message,
+    })
+  }
+}
+
+
+exports.editCourse=async(req,res)=>{
+  try {
+    const { courseId } = req.body
+    console.log("This inside teh editcourse and course id is",courseId)
+
+    const updates = req.body
+    const course = await Course.findById(courseId)
+
+    if (!course) {
+      return res.status(404).json({ error: "Course not found" })
+    }
+
+    // If Thumbnail Image is found, update it
+    if (req.files) {
+      console.log("thumbnail update")
+      const thumbnail = req.files.thumbnailImage
+      const thumbnailImage = await ImageUpload(
+        thumbnail,
+        process.env.FOLDER_NAME
+      )
+      course.thumbnail = thumbnailImage.secure_url
+    }
+
+    // Update only the fields that are present in the request body
+    for (const key in updates) {
+      if (updates.hasOwnProperty(key)) {
+          course[key] = updates[key]
+      }
+    }
+
+    await course.save()
+
+    const updatedCourse = await Course.findOne({
+      _id: courseId,
+    })
+      .populate({
+        path: "instructor",
+        populate: {
+          path: "additionalDetails",
+        },
+      })
+      .populate("category")
+      .populate({
+        path: "courseContent",
+        populate: {
+          path: "subSection",
+        },
+      })
+      .exec()
+
+    res.json({
+      success: true,
+      message: "Course updated successfully",
+      data: updatedCourse,
+    })
+  } 
+  catch (error) {
+    console.error(error)
+    res.status(500).json({
+      success: false,
+      message: "Internal server error",
+      error: error.message,
     })
   }
 }

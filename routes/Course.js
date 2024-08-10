@@ -1,7 +1,7 @@
 const express=require("express")
 const router=express.Router()
 
-const{CreateCourse,GetcourseDetail,getAllCourses, getInstructorCourses, deleteCourse, Publish, getStudentCourses, getFullCourseDetails}=require("../controller/Course")
+const{CreateCourse,GetcourseDetail,getAllCourses, getInstructorCourses, deleteCourse, Publish, getStudentCourses, getFullCourseDetails, editCourse}=require("../controller/Course")
 const{auth,isAdmin,isStudent,isInstructor}=require("../middlewares/auth")
 const{CreateSection,deleteSection,updateSection}=require("../controller/Section")
 const{createsubsection, deleteSubSection, updateSubSection}=require("../controller/SubSection")
@@ -36,6 +36,9 @@ router.get("/getAllCourses",getAllCourses)
 router.post("/getCourseDetails",GetcourseDetail)
 
 router.post("/getFullCourseDetails", auth, getFullCourseDetails)
+
+// for the the course edit
+router.post("/editcourse",auth,isInstructor,editCourse)
 
 
 

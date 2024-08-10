@@ -81,7 +81,7 @@ exports.deleteSubSection = async (req, res) => {
     }
   }
 
-  exports.updateSubSection = async (req, res) => {
+exports.updateSubSection = async (req, res) => {
     try {
       const { sectionId,subSectionId, title, description } = req.body
       const subSection = await SubSection.findById(subSectionId)
@@ -126,5 +126,15 @@ exports.deleteSubSection = async (req, res) => {
         success: false,
         message: "An error occurred while updating the section",
       })
+    }
+  }
+
+  // subsection video url get
+  exports.videoSubSection=async(req,res)=>{
+    try{
+      
+    }
+    catch(err){
+
     }
   }
